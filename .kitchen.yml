@@ -1,0 +1,25 @@
+---
+driver_plugin: vagrant
+driver_config:
+  require_chef_omnibus: 11.10.4
+provisioner: chef_zero
+
+platforms:
+  - name: ubuntu-12.04
+    run_list:
+      - 'recipe[apt::default]'
+    attributes: { "ssl":{"verify":false} }
+
+suites:
+  - name: install
+    run_list:
+      - 'recipe[bfd::install]'
+  - name: operate
+    run_list:
+      - 'recipe[bfd::install]'
+      - 'recipe[bfd::default]'
+  - name: start-beacon
+    run_list:
+      - 'recipe[bfd::install]'
+      - 'recipe[bfd::default]'
+      - 'recipe[bfd::beacon]'

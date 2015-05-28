@@ -1,0 +1,27 @@
+#!upstart
+description "BFDD Beacon"
+
+start on runlevel [345]
+stop on runlevel [0126]
+
+env CONTROL=""
+env LISTEN="--listen=0.0.0.0"
+
+respawn
+
+# BFD is very time sensitive and should be lightweight; give it priority
+nice -19
+
+pre-start script
+   if [ ! -e <%= "#{node[:bfd][:install_dir]}/bin/bfdd-beacon" %> ]
+   then
+      logger "ERROR: bfdd-beacon does not exist"
+      stop
+      exit 0
+   fi
+end script
+
+script
+   exec <%= node[:bfd][:install_dir] %>/bin/bfdd-beacon $CONTROL $LISTEN 2>&1
+end script
+
