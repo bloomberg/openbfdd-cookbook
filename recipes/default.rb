@@ -2,12 +2,45 @@
 # Cookbook Name:: bfd
 # Recipe:: default
 #
-# Copyright (C) 2015 Bloomberg Finance L.P.
+# Copyright (C) 2016 Bloomberg Finance L.P.
 #
 
-# from http://stackoverflow.com/questions/3163641/get-a-class-by-name-in-ruby
-package node[:bfd][:package][:short_name] do
-  source node[:bfd][:package][:source] if node[:bfd][:package][:source]
+if node[:bfd][:package][:source]
+  source_uri = URI.parse(node[:bfd][:package][:source])
+
+  #
+  # If the parsed source URI has a scheme, and that scheme is not
+  # file:///, then this is a remote file and we should instantiate a
+  # remote_file resource.
+  #
+  # If there's no scheme, assume the source is already a local file.
+  #
+  if source_uri.scheme && source_uri.scheme != 'file'
+    output_directory =
+      ::File.join(Chef::Config[:file_cache_path], 'bfd')
+
+    local_file_path =
+      ::File.join(output_directory, ::File.basename(source_uri.path))
+
+    directory output_directory do
+      mode 0755
+    end
+
+    remote_file local_file_path do
+      source source_uri.to_s
+      mode 0644
+    end
+  else
+    local_file_path = source_uri.path
+  end
+
+  dpkg_package node[:bfd][:package][:short_name] do
+    source local_file_path
+  end
+else
+  package node[:bfd][:package][:short_name] do
+    action :upgrade
+  end
 end
 
 template "bfdd-beacon upstart config" do
