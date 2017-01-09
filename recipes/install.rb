@@ -10,16 +10,14 @@ owner = node[:bfd][:owner]
 group = node[:bfd][:group]
 source_code_location = "#{Chef::Config[:file_cache_path]}/bfd"
 
-%w(ruby1.9.1-dev).each do |pkg|
-  package pkg
-end
+package 'ruby-dev'
 
 gem_package 'fpm' do
   gem_binary '/usr/bin/gem'
   action :install
 end
 
-%w(automake autoconf gcc git make).each do |pkg|
+%w(automake autoconf gcc g++ git make).each do |pkg|
   package pkg do
     action :install
   end
@@ -30,9 +28,6 @@ git source_code_location do
    revision node[:bfd][:repo][:sha]
    action :sync
    notifies :run, 'bash[buildtools_bfd]', :immediately
-   notifies :run, 'bash[configure_bfd]', :immediately
-   notifies :run, 'bash[make_bfd]', :immediately
-   notifies :run, 'bash[build_bfd_package]', :immediately
    not_if { ::File.exist?(target_filepath) }
 end
 
@@ -40,18 +35,21 @@ bash 'buildtools_bfd' do
   cwd source_code_location
   code './autogen.sh'
   action :nothing
+  notifies :run, 'bash[configure_bfd]', :immediately
 end
 
 bash 'configure_bfd' do
   cwd source_code_location
   code "./configure --prefix=#{node[:bfd][:bin_dir]}/bfd-build"
   action :nothing
+  notifies :run, 'bash[make_bfd]', :immediately
 end
 
 bash 'make_bfd' do
   cwd source_code_location
   code 'make && make install'
   action :nothing
+  notifies :run, 'bash[build_bfd_package]', :immediately
 end
 
 bash 'build_bfd_package' do

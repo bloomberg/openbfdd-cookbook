@@ -1,0 +1,11 @@
+{
+  "name": "chef11",
+  "json_class": "Chef::Environment",
+  "description": "Laptop test environment",
+  "cookbook_versions": {
+    "poise": "= 1.0.12",
+    "apt": "= 2.4.0"
+  },
+  "chef_type": "environment"
+}
+

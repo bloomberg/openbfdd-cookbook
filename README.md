@@ -4,6 +4,7 @@ Installs and configures [OpenBFDD][1].
 
 ## Supported Platforms
 - Ubuntu 12.04, 14.04
+- Chef 11, 12
 
 ## Attributes
 
@@ -105,6 +106,14 @@ Include `bfd` in your node's `run_list`:
 ## Maintainers
 
 Author:: [Bloomberg Compute Architecture Group][2] (<compute@bloomberg.net>)
+
+### Testing
+
+To test the Chef 11 compatibility one needs the [kitchen-chef_zero_berks_env gem](https://github.com/ruizink/kitchen-chef_zero_berks_env)
+This can be installed via `chef gem install kitchen-chef_zero_berks_env`
+
+Test kitchen and Server Spec test the operation of this cookbook; one can run the tests with:
+`kitchen verify`
 
 [1]: http://dyninc.github.io/OpenBFDD
 [2]: http://www.bloomberglabs.com/compute-architecture/
