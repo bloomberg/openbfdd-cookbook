@@ -50,6 +50,18 @@ template "bfdd-beacon upstart config" do
   group "root"
 end
 
+file "bfdd-beacon upstart defaults" do
+  path "/etc/default/bfdd-beacon"
+  content <<-EOH
+#{"CONTROL=" + node[:bfd][:service][:control] if node[:bfd][:service][:control]}
+#{"LISTEN=" + node[:bfd][:service][:listen] if node[:bfd][:service][:listen]}
+EOH
+  owner "root"
+  group "root"
+  only_if { node[:bfd][:service][:control] or node[:bfd][:service][:listen] }
+  notifies :restart, "service[bfdd-beacon]"
+end
+
 service "bfdd-beacon" do
   provider Chef::Provider::Service::Upstart
   supports :status => true

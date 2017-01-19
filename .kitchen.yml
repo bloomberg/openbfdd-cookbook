@@ -27,6 +27,14 @@ suites:
       - 'recipe[bfd::install]'
       - 'recipe[bfd::default]'
   - name: start-beacon
+    attributes: {
+      "bfd": {
+        "service": {
+          "control": "--control='127.0.0.1:1001'",
+          "listen": "--listen='127.0.0.1'"
+        }
+      }
+    }
     run_list:
       - 'recipe[bfd::install]'
       - 'recipe[bfd::default]'

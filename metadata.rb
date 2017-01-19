@@ -11,3 +11,5 @@ supports 'ubuntu', '= 14.04'
 
 depends 'apt'
 depends 'poise'
+
+chef_version '>= 11' if respond_to?(:chef_version)

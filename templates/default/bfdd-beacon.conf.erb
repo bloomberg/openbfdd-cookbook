@@ -5,9 +5,10 @@ start on runlevel [345]
 stop on runlevel [0126]
 
 env CONTROL=""
-env LISTEN="--listen=0.0.0.0"
+env LISTEN=""
 
 respawn
+respawn limit 10 5
 
 # BFD is very time sensitive and should be lightweight; give it priority
 nice -19
@@ -22,6 +23,10 @@ pre-start script
 end script
 
 script
-   exec <%= node[:bfd][:install_dir] %>/bin/bfdd-beacon $CONTROL $LISTEN 2>&1
+   if [ -f /etc/default/bfdd-beacon ]; then 
+     . /etc/default/bfdd-beacon
+   fi
+
+   exec <%= node[:bfd][:install_dir] %>/bin/bfdd-beacon --nofork $CONTROL $LISTEN 2>&1
 end script
 
