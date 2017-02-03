@@ -17,4 +17,7 @@ default[:bfd][:install_dir] = '/usr/local'
 default[:bfd][:bin_dir] = "#{Chef::Config[:file_cache_path]}"
 default[:bfd][:owner] = 'root'
 default[:bfd][:group] = 'root'
-
+# defaults to 127.0.0.1:957/958
+default[:bfd][:service][:control] = nil
+# defaults to 0.0.0.0:3784
+default[:bfd][:service][:listen] = nil

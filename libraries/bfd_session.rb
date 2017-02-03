@@ -5,9 +5,16 @@
 # Copyright (C) 2015 Bloomberg Finance L.P.
 #
 
+begin
+  require 'poise'
+rescue LoadError
+end
+
 class Chef
   class Resource::BfdSession < Resource
     include Poise
+
+    provides(:bfd_session) if respond_to?(:provides)
 
     actions(:connect)
     actions(:up)
