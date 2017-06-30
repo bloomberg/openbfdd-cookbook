@@ -1,33 +1,34 @@
 #
 # Cookbook Name:: bfd
-# Library:: image
+# Library:: bfd_beacon
 #
 # Copyright (C) 2015 Bloomberg Finance L.P.
 #
 
-begin
-  require 'poise'
-rescue LoadError
-end
+require 'chef/resource'
+require 'chef/provider'
 
-class Chef
-  class Resource::BfdBeacon < Resource
-    include Poise
+require 'poise'
+require 'poise/resource'
+require 'poise/provider'
 
-    provides(:bfd_beacon) if respond_to?(:provides)
+module BfdBeacon
+  class Resource < Chef::Resource
+    include Poise::Resource
+    provides(:bfd_beacon)
 
     actions(:start)
     actions(:stop)
 
     attribute(:control, kind_of: [String, Array], default: nil)
     attribute(:listen, kind_of: [String, Array], default: nil)
-
   end
 
-  class Provider::BfdBeacon < Provider
-    include Poise
+  class Provider < Chef::Provider
+    include Poise::Provider
+    provides(:bfd_beacon)
 
-    def action_start 
+    def action_start
       bfd_ctrl = "#{node[:bfd][:install_dir]}/bin/bfdd-control"
       bfd_beacon = "#{node[:bfd][:install_dir]}/bin/bfdd-beacon"
 

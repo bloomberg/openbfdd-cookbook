@@ -6,10 +6,9 @@ description      'Installs/Configures OpenBFD'
 long_description 'Installs/Configures OpenBFD'
 version          '0.2.0'
 
-supports 'ubuntu', '= 12.04'
-supports 'ubuntu', '= 14.04'
+supports 'ubuntu'
 
 depends 'apt'
 depends 'poise'
 
-chef_version '>= 11' if respond_to?(:chef_version)
+chef_version '>= 12' if respond_to?(:chef_version)
