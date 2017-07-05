@@ -43,27 +43,45 @@ else
   end
 end
 
-template "bfdd-beacon upstart config" do
-  path "/etc/init/bfdd-beacon.conf"
-  source "bfdd-beacon.conf.erb"
-  owner "root"
-  group "root"
+template '/etc/default/bfdd-beacon' do
+  source 'bfdd-beacon.defaults.erb'
+  owner 'root'
+  group 'root'
+  variables({
+             control: node[:bfd][:service][:control],
+             listen: node[:bfd][:service][:listen]
+            })
+  notifies :restart, 'service[bfdd-beacon]'
 end
 
-file "bfdd-beacon upstart defaults" do
-  path "/etc/default/bfdd-beacon"
-  content <<-EOH
-#{"CONTROL=" + node[:bfd][:service][:control] if node[:bfd][:service][:control]}
-#{"LISTEN=" + node[:bfd][:service][:listen] if node[:bfd][:service][:listen]}
-EOH
-  owner "root"
-  group "root"
-  only_if { node[:bfd][:service][:control] or node[:bfd][:service][:listen] }
-  notifies :restart, "service[bfdd-beacon]"
+if node[:lsb][:id] == 'Ubuntu' && node[:lsb][:release].to_f <= 14.04
+  template 'bfdd-beacon upstart config' do
+    path '/etc/init/bfdd-beacon.conf'
+    source 'bfdd-beacon.conf.erb'
+    owner 'root'
+    group 'root'
+  end
+else
+  template 'bfdd-beacon systemd config' do
+    path '/etc/systemd/system/bfdd-beacon.service'
+    source 'bfdd-beacon.service.erb'
+    owner 'root'
+    group 'root'
+    variables({
+               bfdd_beacon_path:
+                 File.join(node[:bfd][:install_dir],'/bin/bfdd-beacon')
+              })
+  end
 end
 
-service "bfdd-beacon" do
-  provider Chef::Provider::Service::Upstart
-  supports :status => true
+service 'bfdd-beacon' do
+  supports status: true
   action [:start]
+  if node[:lsb][:id] == 'Ubuntu' && node[:lsb][:release].to_f <= 14.04
+    provider Chef::Provider::Service::Upstart
+
+    if node[:lsb][:codename] == 'trusty'
+      ignore_failure true
+    end
+  end
 end

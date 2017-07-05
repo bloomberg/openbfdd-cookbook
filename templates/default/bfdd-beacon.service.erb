@@ -1,0 +1,10 @@
+[Unit]
+Description=BFDD Beacon
+After=network.target nss-lookup.target
+
+[Service]
+EnvironmentFile=/etc/default/bfdd-beacon
+Type=simple
+ExecStart=<%= @bfdd_beacon_path %> --nofork $CONTROL $LISTEN
+
+
