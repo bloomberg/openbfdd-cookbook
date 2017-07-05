@@ -42,7 +42,10 @@ module BfdBeacon
 
       converge_by("starting BFD #{new_resource.name}") do
         notifying_block do
-          bash "#{bfd_beacon}#{controls}#{listeners}"
+          code_snippet = "#{bfd_beacon}#{controls}#{listeners}"
+          bash code_snippet do
+            code code_snippet
+          end
         end
       end
     end
