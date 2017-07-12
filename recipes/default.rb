@@ -79,9 +79,5 @@ service 'bfdd-beacon' do
   action [:start]
   if node[:lsb][:id] == 'Ubuntu' && node[:lsb][:release].to_f <= 14.04
     provider Chef::Provider::Service::Upstart
-
-    if node[:lsb][:codename] == 'trusty'
-      ignore_failure true
-    end
   end
 end
