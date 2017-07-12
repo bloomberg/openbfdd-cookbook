@@ -10,8 +10,10 @@ owner = node[:bfd][:owner]
 group = node[:bfd][:group]
 source_code_location = "#{Chef::Config[:file_cache_path]}/bfd"
 
-%w(ruby1.9.1-dev ruby1.9.1 automake autoconf gcc g++ git make).each do |pkg|
-  package pkg
+%w(ruby-dev ruby automake autoconf gcc g++ git make).each do |pkg|
+  package pkg do
+    action :upgrade
+  end
 end
 
 gem_package 'fpm' do
