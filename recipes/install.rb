@@ -16,8 +16,9 @@ source_code_location = "#{Chef::Config[:file_cache_path]}/bfd"
   end
 end
 
-gem_package 'fpm' do
-  gem_binary '/usr/bin/gem'
+chef_gem 'fpm' do
+  gem_binary Chef::Util::PathHelper.join(Chef::Config.embedded_dir,'bin','gem')
+  compile_time true
   action :install
 end
 
@@ -56,7 +57,7 @@ bash 'build_bfd_package' do
   user 'root'
   group 'root'
   code %Q{
-    fpm -s dir -t deb --prefix /usr/local \
+    $(#{Chef::Util::PathHelper.join(Chef::Config.embedded_dir,'bin')}/ruby -r rubygems -e 'puts Gem.user_dir')/bin/fpm -s dir -t deb --prefix /usr/local \
         -n #{node[:bfd][:package][:short_name]} \
         -v #{node[:bfd][:version]} \
         #{dependencies_str} \

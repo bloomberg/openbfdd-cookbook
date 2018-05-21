@@ -1,6 +1,11 @@
 ---
 driver_plugin: vagrant
 
+provisioner:
+  name: chef_zero
+  chef_omnibus_install_options: -P chefdk -v 1.2
+  chef_omnibus_root: /opt/chefdk
+
 platforms:
   - name: ubuntu-16.04
     run_list:
