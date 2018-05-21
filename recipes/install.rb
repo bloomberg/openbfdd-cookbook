@@ -16,8 +16,8 @@ source_code_location = "#{Chef::Config[:file_cache_path]}/bfd"
   end
 end
 
-gem_package 'fpm' do
-  gem_binary '/usr/bin/gem'
+chef_gem 'fpm' do
+  compile_time false
   action :install
 end
 
